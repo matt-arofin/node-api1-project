@@ -27,7 +27,13 @@ server.get('/api/users', (req, res) => {
 // GET by id
 server.get('/api/users/:id', (req, res) => {
     const id = req.params.id
-    model.findById(id).then(user => res.status(200).json(user))
+    model.findById(id).then(user => {
+        if(!user){
+            res.status(404).json({message: 'does not exist'})
+        } else {
+            res.status(200).json(user)
+        }
+    })
 })
 
 // POST
@@ -35,7 +41,7 @@ server.post('/api/users', (req, res) => {
     // Use insert function to create new user
     const body = req.body
     if(body.name  == null || body.bio == null){
-        res.status(400).json({message: 'provide name and bio for the user'})
+        res.status(400).json({message: 'Please provide name and bio for the user'})
     } else {
         model.insert(body).then(user => {
             res.status(201).json(user)
@@ -46,7 +52,28 @@ server.post('/api/users', (req, res) => {
 // DELETE
 server.delete('/api/users/:id', (req, res) => {
     const id = req.params.id
-    model.findById(id).then(user => res.status(200).json(user))
+    model.remove(id).then(user => {
+        if(!user){
+            res.status(404).json({message: 'does not exist'})
+        } else{
+            res.status(200).json(user)
+        }
+    })
+})
+
+// PUT
+server.put('/api/users/:id', (req, res) => {
+    const id = req.params.id
+    const body = req.body
+
+
+    model.update(id).then(user => {
+        if(!user){
+            res.status(400).json({message: 'does not exist'})
+        } else {
+            res.status(200).json(user)
+        }
+    })
 })
 
 
